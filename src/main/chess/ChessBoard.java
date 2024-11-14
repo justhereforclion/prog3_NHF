@@ -1,4 +1,4 @@
-package chess;
+package main.chess;
 
 public class ChessBoard {
 
@@ -13,6 +13,10 @@ public class ChessBoard {
         public int getRow(){ return this.row;}
 
         public int getCol(){ return this.column;}
+
+        public Position add(Position vector){
+            return new Position(this.row + vector.row, this.column + vector.column);
+        }
 
     }
    

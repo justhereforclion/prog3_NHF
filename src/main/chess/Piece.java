@@ -1,4 +1,4 @@
-package chess;
+package main.chess;
 
 public class Piece {
    
