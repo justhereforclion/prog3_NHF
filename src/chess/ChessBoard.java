@@ -1,25 +1,24 @@
 package chess;
 
 public class ChessBoard {
-   
-    class Pozition {
+
+    class Position {
         private int row;
-        private int coloumn;
+        private int column;
 
-        public Pozition (int r, int c){
+        public Position (int r, int c){
             this.row = r;
-            this.coloumn = c;
+            this.column = c;
         }
-
         public int getRow(){ return this.row;}
 
-        public int getColoumn(){ return this.coloumn;}                
-    }
+        public int getCol(){ return this.column;}
 
+    }
+   
     class Square {
         private Color color;
         private Piece piece;
-        private Pozition poz;
 
         public Square() {
             this.color = null;
@@ -31,6 +30,8 @@ public class ChessBoard {
             this.piece = p;
         }
 
+        public Piece getPiece(){return this.piece;}
+
         public void setPiece(Piece p){
             this.piece = p;
         }
@@ -40,13 +41,14 @@ public class ChessBoard {
         }
     }
 
+    //This serves as a container, stores the squares
     private Square[][] board;
 
     public ChessBoard() {
         board = new Square[8][8];
     }
 
-    public void paintBoard(){
+    private void paintBoard(){
 
         for(int r = 0; r < 8; ++r){
             for(int c = 0; c < 8; ++c){
@@ -60,7 +62,7 @@ public class ChessBoard {
             }
         }
     }
-    private Square[][] setPawns(){
+    private void setPawns(){
         for(int r = 0; r < 8; ++r){
             for(int c = 0; c < 8; ++c){
                 if( r == 0 || r == 1){
@@ -70,68 +72,69 @@ public class ChessBoard {
                 }
             }
         }
-        return this.board;
     }
 
-    private Square[][] setRooks(){
+    private void setRooks(){
 
         this.board[0][0].setPiece(new Piece(Color.WHITE, Piece.PieceType.ROOK));
         this.board[0][7].setPiece(new Piece(Color.WHITE, Piece.PieceType.ROOK));
         this.board[7][0].setPiece(new Piece(Color.BLACK, Piece.PieceType.ROOK));
         this.board[7][7].setPiece(new Piece(Color.BLACK, Piece.PieceType.ROOK));
 
-        return this.board;
     }
 
-    private Square[][] setKnights(){
+    private void setKnights(){
 
         this.board[0][1].setPiece(new Piece(Color.WHITE, Piece.PieceType.KNIGHT));
         this.board[0][6].setPiece(new Piece(Color.WHITE, Piece.PieceType.KNIGHT));
         this.board[7][1].setPiece(new Piece(Color.BLACK, Piece.PieceType.KNIGHT));
         this.board[7][6].setPiece(new Piece(Color.BLACK, Piece.PieceType.KNIGHT));
 
-        return this.board;
     }
 
-    private Square[][] setBishops(){
+    private void setBishops(){
         
         this.board[0][2].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
         this.board[0][5].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
         this.board[7][2].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
         this.board[7][5].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
 
-        return this.board;
     }
 
-    private Square[][] setQueens(){
+    private void setQueens(){
 
         this.board[0][3].setPiece(new Piece(Color.WHITE, Piece.PieceType.QUEEN));
         this.board[7][3].setPiece(new Piece(Color.BLACK, Piece.PieceType.QUEEN));
         
-        return this.board;
 
     }
 
-    private Square[][] setKings(){
+    private void setKings(){
 
         this.board[0][4].setPiece(new Piece(Color.WHITE, Piece.PieceType.KING));
         this.board[7][4].setPiece(new Piece(Color.BLACK, Piece.PieceType.KING));
-        return this.board;
     }
 
-    public void setPieces() {
-        board = setPawns();
-        board = setRooks();
-        board = setKnights();
-        board = setBishops();
-        board = setQueens();
-        board = setKings();
+    private void setPieces() {
+        this.setPawns();
+        this.setRooks();
+        this.setKnights();
+        this.setBishops();
+        this.setQueens();
+        this.setKings();
     }
 
+    //Filling board with new squares, and pieces
     public void initBoard() {
+        this.paintBoard();
+        this.setPieces();   
+    }
 
-        //Filling board with new squares, and pieces
-        for(int r = 0; r < 8; ++r){
-            for(int c = 0; c < 8; ++c){
+    public Piece getPieceOnPos( Position pos ){
+        return this.board[pos.getRow()][pos.getCol()].getPiece();
+    }
+
+    public void setPieceOnPos(Piece piece, Position pos){
+        this.board[pos.getRow()][pos.getCol()].setPiece(piece);
     }
 }
