@@ -1,5 +1,7 @@
 package main.chess;
 
+import java.awt.Color;
+
 public class ChessBoard {
    
     class Square {
@@ -118,6 +120,13 @@ public class ChessBoard {
 
     public Piece getPieceOnPos( Position pos ){
         return this.board[pos.getRow()][pos.getCol()].getPiece();
+    }
+
+    public boolean isPosOccupied(Position pos){
+        if(this.getPieceOnPos(pos).getType() == null){
+            return false;
+        }
+        else return true;
     }
 
     public void setPieceOnPos(Piece piece, Position pos){
