@@ -1,3 +1,5 @@
+package main;
+
 import main.chess.GameFrame;
 
 public class App {
