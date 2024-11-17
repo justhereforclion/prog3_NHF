@@ -1,5 +1,7 @@
 package main.chess;
 
+import java.awt.Color;
+
 public class Piece {
    
     enum PieceType {

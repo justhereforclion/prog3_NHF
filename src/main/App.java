@@ -1,9 +1,10 @@
 package main;
 
-import main.chess.GameFrame;
+import main.chess.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        GameFrame window = new GameFrame();
+        ChessBoard chessBoard = new ChessBoard();
+        GameFrame window = new GameFrame(chessBoard);
     }
 }
