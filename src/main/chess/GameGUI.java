@@ -11,7 +11,7 @@ import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
-public class GameFrame {
+public class GameGUI {
     //Parent frame and all of its panels
     private JFrame frame;
     private JPanel menu;
@@ -25,13 +25,13 @@ public class GameFrame {
     private String[] ROW_IDS = {"1","2","3","4","5","6","7","8"};
 
 
-    public GameFrame(ChessBoard b){
+    public GameGUI(ChessBoard b){
 
         frame = new JFrame("CHESS");
         chessBoard = b;
 
         //TODO Initalizing all the panels
-        initGame();
+        constructGamePanel();
         
 
         //Adding JComponents to the frame
@@ -45,7 +45,7 @@ public class GameFrame {
         frame.setVisible(true);
     }
 
-    private void initGame(){
+    private void constructGamePanel(){
         //The main panel which contains the table and the sidebar
         this.game = new JPanel(new BorderLayout(10,0));
 
