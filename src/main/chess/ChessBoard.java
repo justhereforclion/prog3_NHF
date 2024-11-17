@@ -51,15 +51,15 @@ public class ChessBoard {
             for(int c = 0; c < 8; ++c){
                 if( r % 2 == 1){
                     if( c % 2 == 1){
-                        board[r][c].setColor(new Color(0.0f, 0.6f,0.0f));
+                        board[r][c].setColor(new Color(0.628f, 0.398f,0.183f));
                     } else {
-                        board[r][c].setColor(new Color(0.82f, 0.82f,0.82f));
+                        board[r][c].setColor(new Color(0.925f, 0.789f,0.628f));
                     }
                 }else{
                     if( c % 2 == 1){
-                        board[r][c].setColor(new Color(0.82f, 0.82f,0.82f));
+                        board[r][c].setColor(new Color(0.925f, 0.789f,0.628f));
                     } else {
-                        board[r][c].setColor( new Color(0.0f, 0.6f,0.f));
+                        board[r][c].setColor( new Color(0.628f, 0.398f,0.183f));
                     }
                 }
             }
