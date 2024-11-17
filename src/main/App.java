@@ -1,4 +1,5 @@
 package main;
+
 import main.chess.*;
 
 public class App {

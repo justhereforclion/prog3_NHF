@@ -1,10 +1,13 @@
 package main.chess;
 
+import javax.swing.BoxLayout;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
@@ -15,7 +18,7 @@ public class GameFrame {
     private JPanel game;
     private JPanel rules;
 
-    //Visulizes the state of this board
+    //The frame visulizes the state of this board
     private ChessBoard chessBoard;
 
     private String[] COLUMN_IDS = {"A","B","C","D","E","F","G","H"};
@@ -27,36 +30,51 @@ public class GameFrame {
         frame = new JFrame("CHESS");
         chessBoard = b;
 
+        //TODO Initalizing all the panels
         initGame();
-        //frame.add(this.initMenu());
-        //frame.add(this.initRules());
-        //TODO
+        
 
         //Adding JComponents to the frame
         frame.add(game,BorderLayout.CENTER);
         
 
-        frame.pack();
-        frame.setResizable(false);
+        //Adjusting the main frame
+        frame.setResizable(true);
+        frame.setMinimumSize( new Dimension(800,700));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
 
     private void initGame(){
+        //The main panel which contains the table and the sidebar
+        this.game = new JPanel(new BorderLayout(10,0));
 
-        this.game = new JPanel(new BorderLayout(5,0));
-        JPanel boardPanel = new JPanel();
-        boardPanel.setLayout(new GridLayout(8,8));
-        JPanel sideBar = new JPanel();
+        //Board panel contains the buttons
+        JPanel board;
+        //Sidebar is next to board, contains two buttons
+        Box sideBar = Box.createVerticalBox();
 
+        //Adding buttons to sidebar, changing their sizes for better visibility TODO
         JButton menuButton = new JButton("Menu");
         JButton saveButton = new JButton("Save");
+        
 
         sideBar.add(menuButton);
         sideBar.add(saveButton);
-        game.add(sideBar, BorderLayout.EAST);
        
 
+        game.add(sideBar, BorderLayout.EAST);
+       
+        board = this.refreshBoard();
+
+        game.add(board, BorderLayout.CENTER);
+    }
+        
+    //Refreshing what is displayed on board
+    private JPanel refreshBoard(){
+
+        //New panel which will contain all the buttons
+        JPanel board = new JPanel( new GridLayout(8,8));
 
         for(int r=7; r >= 0; r--){
             for(int c=0; c <= 7; c++){
@@ -67,6 +85,7 @@ public class GameFrame {
                 if(chessBoard.isPosOccupied(new Position(r,c)) == true){
                     String colorOfImg = chessBoard.getPieceOnPos(new Position(r,c)).getColor() == Color.WHITE ? "white" : "black";
                     String typeOfImg;
+
                     switch(chessBoard.getPieceOnPos(new Position(r,c)).getType()){
                         case Piece.PieceType.PAWN : typeOfImg = "pawn";
                         break;
@@ -84,21 +103,18 @@ public class GameFrame {
                     }
                     String nameOfImg = colorOfImg + "-" + typeOfImg + ".png";
                     String imgPath = "src/main/piece-images/" + nameOfImg;
-
-                     square = new JButton( new ImageIcon(imgPath));
+                    //Initalize a button with image
+                    square = new JButton( new ImageIcon(imgPath));
                 } else{
-                     square = new JButton();
+                    //Initalize a button without an image
+                    square = new JButton();
                 }
-                
+                //Changes background color on button to match the chessboard colors
                 square.setBackground(chessBoard.getSquareOnPos(new Position(r,c)).getColor());
                 
-                boardPanel.add(square);
-
+                board.add(square);
             }
-            game.add(boardPanel, BorderLayout.CENTER);
         }
-        
-
-        
+        return board;
     }
 }
