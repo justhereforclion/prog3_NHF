@@ -21,21 +21,15 @@ class Position {
     public String toString(){
         //Getting the ASCII values of row and column which will be converted into String
         char[] chars = new char[2];
-        chars[0] = (char)(this.row + 65);
-        chars[1] = (char)(this.column + 49);
+        chars[0] = (char)(this.column + 65);
+        chars[1] = (char)(this.row + 49);
         return new String(chars);
     }
 
     public static Position posFromString(String str){
-        byte[] bytes = new byte[2];
-        try {
-            bytes = str.getBytes("US_ASCII");
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        int row = (int)bytes[0];
-        int column = (int)bytes[1];
+        int column = str.charAt(0) - 65;
+        int row = str.charAt(1) - 49;
+        
         return new Position(row,column);
     }
 }

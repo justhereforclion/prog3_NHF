@@ -7,6 +7,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,6 +20,8 @@ public class GameGUI {
     private JPanel game;
     private JPanel rules;
 
+    //Action listeners
+    private BoardActionListener listener;
     //The frame visulizes the state of this board
     private ChessBoard chessBoard;
 
@@ -31,6 +35,8 @@ public class GameGUI {
         chessBoard = b;
 
         //TODO Initalizing all the panels
+        //Setting the boardActionListeners
+        listener = new BoardActionListener();
         constructGamePanel();
         
 
@@ -111,7 +117,8 @@ public class GameGUI {
                 }
                 //Changes background color on button to match the chessboard colors
                 square.setBackground(chessBoard.getSquareOnPos(new Position(r,c)).getColor());
-                
+                square.setActionCommand(new Position(r,c).toString());
+                square.addActionListener(listener);
                 board.add(square);
             }
         }
