@@ -1,6 +1,10 @@
 package main;
+import main.chess.*;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        ChessBoard chessBoard = new ChessBoard();
+        GameFrame window = new GameFrame(chessBoard);
+
     }
 }

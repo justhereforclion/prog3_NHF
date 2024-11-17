@@ -1,24 +1,8 @@
 package main.chess;
 
+import java.awt.Color;
+
 public class ChessBoard {
-
-    class Position {
-        private int row;
-        private int column;
-
-        public Position (int r, int c){
-            this.row = r;
-            this.column = c;
-        }
-        public int getRow(){ return this.row;}
-
-        public int getCol(){ return this.column;}
-
-        public Position add(Position vector){
-            return new Position(this.row + vector.row, this.column + vector.column);
-        }
-
-    }
    
     class Square {
         private Color color;
@@ -34,15 +18,23 @@ public class ChessBoard {
             this.piece = p;
         }
 
+        public boolean isSquareOccupied(){
+            return this.piece != null;
+        }
         public Piece getPiece(){return this.piece;}
 
         public void setPiece(Piece p){
             this.piece = p;
         }
 
+        public Color getColor(){
+            return this.color;
+        }
+
         public void setColor(Color c){
             this.color = c;
         }
+    
     }
 
     //This serves as a container, stores the squares
@@ -50,6 +42,7 @@ public class ChessBoard {
 
     public ChessBoard() {
         board = new Square[8][8];
+        this.initBoard();
     }
 
     private void paintBoard(){
@@ -58,9 +51,15 @@ public class ChessBoard {
             for(int c = 0; c < 8; ++c){
                 if( r % 2 == 1){
                     if( c % 2 == 1){
-                        board[r][c].setColor(Color.BLACK);
+                        board[r][c].setColor(new Color(0.628f, 0.398f,0.183f));
                     } else {
-                        board[r][c].setColor(Color.WHITE);
+                        board[r][c].setColor(new Color(0.925f, 0.789f,0.628f));
+                    }
+                }else{
+                    if( c % 2 == 1){
+                        board[r][c].setColor(new Color(0.925f, 0.789f,0.628f));
+                    } else {
+                        board[r][c].setColor( new Color(0.628f, 0.398f,0.183f));
                     }
                 }
             }
@@ -100,8 +99,8 @@ public class ChessBoard {
         
         this.board[0][2].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
         this.board[0][5].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
-        this.board[7][2].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
-        this.board[7][5].setPiece(new Piece(Color.WHITE, Piece.PieceType.BISHOP));
+        this.board[7][2].setPiece(new Piece(Color.BLACK, Piece.PieceType.BISHOP));
+        this.board[7][5].setPiece(new Piece(Color.BLACK, Piece.PieceType.BISHOP));
 
     }
 
@@ -129,13 +128,25 @@ public class ChessBoard {
     }
 
     //Filling board with new squares, and pieces
-    public void initBoard() {
+    private void initBoard() {
+        for(int r = 0; r < 8; ++r){
+            for(int c = 0; c < 8; ++c){
+                this.board[r][c] = new Square();
+            }
+        }
         this.paintBoard();
         this.setPieces();   
     }
 
+    public Square getSquareOnPos(Position pos){
+        return this.board[pos.getRow()][pos.getCol()];
+    }
     public Piece getPieceOnPos( Position pos ){
         return this.board[pos.getRow()][pos.getCol()].getPiece();
+    }
+
+    public boolean isPosOccupied(Position pos){
+        return this.board[pos.getRow()][pos.getCol()].isSquareOccupied();
     }
 
     public void setPieceOnPos(Piece piece, Position pos){
