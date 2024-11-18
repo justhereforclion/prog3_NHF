@@ -38,7 +38,7 @@ public class Engine {
 
     public void setGameGUI(GameGUI gui){this.gui = gui;}
 
-    //Handling input from GameGUI, boardActionListener calls this
+    //Handling input from GameGUI, ActionListener calls this
     public void handleInput(Position pos){
         
         if(hasPieceInHand){
@@ -86,26 +86,40 @@ public class Engine {
                 return false;
             }
         }
+        //Checks rules by piece type TODO
         
         return true;
     }
+    private static boolean isPosOnBoard(Position pos){
+        return pos.getRow() < 8 && pos.getRow() >= 0 && pos.getCol() < 8 && pos.getCol() >= 0;
+    }
 
-    private boolean isPawnMovable( Move move ){
-        //Which color is the pawn, sets the direction it can move
-        Position vector;
-        vector = chessBoard.getPieceOnPos(move.src).getColor() == Color.WHITE ? new Position(1,0) : new Position(-1,0);
-        
-        //Only stepping one square ahead
-        if(move.dest == move.src.add(vector)){return true;}
-        
-        //Taking a piece while moving
-        else if(chessBoard.getPieceOnPos(move.dest) != null) {
-            if(move.dest == move.src.add(vector.add(new Position(0,1)))){return true;}
-            if(move.dest == move.src.add(vector.add(new Position(0,-1)))){return true;}
+    //Recursively checks whether dest is reachable from src with given limit and direction(vector);
+    private boolean isDestReachable(Position src, Position dest, Position vector,int limit){
+        //Cant reach this square, didnt find dest on the way here
+        if(limit < 0){
+            return false;
         }
-
-        //Destination does not fit the scenarios above
-        return false;
+        //Walked off the table,  didnt find dest on the way here
+        else if( ! Engine.isPosOnBoard(dest) ){
+            return false;
+        }
+        //Standing on dest, dest is reachable from original src
+        else if (src.equals(dest)){
+            return true;
+        }
+        //Walks into a piece on the way, blocking the path 
+        else if(chessBoard.isPosOccupied(src)){
+            return false;
+        }
+        //None of the above, keep searching in the given direction
+        else {
+            return isDestReachable(src.add(vector), dest, vector, limit-1);
+        }
+    }
+    private boolean isPawnMovable( Move move ){
+        //Pawn TODO
+        return true
     }
 
 }
