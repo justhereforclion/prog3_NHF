@@ -58,11 +58,12 @@ public class Engine {
 
     }
 
-    //Executing a valid move on chessBoard
+    //Executing a valid move on chessBoard, changing hasMoved attribute of piece 
     public void executeMove(Move move){
         Piece pieceInHand = chessBoard.getPieceOnPos(move.src);
         chessBoard.setPieceOnPos(pieceInHand, move.dest);
         chessBoard.setPieceOnPos(null,move.src);
+        chessBoard.getPieceOnPos(move.dest).setHasMoved(true);
     }
 
     //Updates static attributes and GUI after each valid move
@@ -86,40 +87,72 @@ public class Engine {
                 return false;
             }
         }
+
         //Checks rules by piece type TODO
+        boolean isValidMove = false;
+        switch(chessBoard.getPieceOnPos(move.src).getType()){
+            case PAWN: isValidMove = isValidPawnMove(move);
+            //case ROOK: isValidMove = isValidRookMove(move);
+            //case KNIGHT: isValidMove = isValidKnightMove(move);
+           // case BISHOP: isValidMove = isValidBishopMove(move);
+           // case QUEEN: isValidMove = isValidQueenMove(move);
+            //case KING: isValidMove = isValidKingMove(move);
+        }
+        return isValidMove;
         
-        return true;
+    }
+    private boolean isValidPawnMove(Move move){
+        Piece pawn = chessBoard.getPieceOnPos(move.src); 
+        int direction = pawn.getColor().equals(Color.WHITE) ? 1 : -1;
+
+        if(move.dest.equals(move.src.add(new Position(2 * direction, 0)))){
+            //Must be its first move if it moves two rows at a time, and cannot take a piece
+            return ! pawn.hasMoved() &&  ! chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
+        }
+        else if(move.dest.equals(move.src.add(new Position(1 * direction, 0)))){
+            //Destination must be empty if it moves one row ahead
+            return ! chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
+        }
+        else if(move.dest.equals(move.src.add(new Position(1 * direction, -1)))){
+            //Must take a piece if it moves diagonally
+            return chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
+        }
+        else if(move.dest.equals(move.src.add(new Position(1 * direction, 1)))){
+            return chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
+        }
+        //Destination does not match the listed scenarios above, move is illegal
+        return false;
     }
     private static boolean isPosOnBoard(Position pos){
         return pos.getRow() < 8 && pos.getRow() >= 0 && pos.getCol() < 8 && pos.getCol() >= 0;
     }
 
     //Recursively checks whether dest is reachable from src with given limit and direction(vector);
-    private boolean isDestReachable(Position src, Position dest, Position vector,int limit){
-        //Cant reach this square, didnt find dest on the way here
+    private boolean isDestReachable(Position origin, Position current, Position dest, Position vector,int limit){
+        //Didnt find dest on the way here
         if(limit < 0){
             return false;
         }
         //Walked off the table,  didnt find dest on the way here
-        else if( ! Engine.isPosOnBoard(dest) ){
+        else if( ! Engine.isPosOnBoard(current) ){
             return false;
         }
         //Standing on dest, dest is reachable from original src
-        else if (src.equals(dest)){
+        else if (current.equals(dest)){
             return true;
         }
         //Walks into a piece on the way, blocking the path 
-        else if(chessBoard.isPosOccupied(src)){
-            return false;
+        else if(! origin.equals(current)){
+            return chessBoard.isPosOccupied(current);
         }
         //None of the above, keep searching in the given direction
         else {
-            return isDestReachable(src.add(vector), dest, vector, limit-1);
+            return isDestReachable(origin, current.add(vector), dest, vector, limit-1);
         }
     }
     private boolean isPawnMovable( Move move ){
         //Pawn TODO
-        return true
-    }
+        return false;
 
+}
 }

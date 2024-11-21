@@ -17,6 +17,13 @@ class Position {
     public Position add(Position vector){
         return new Position(this.row + vector.row, this.column + vector.column);
     }
+    
+    public boolean equals(Position pos){
+        if(this.row == pos.getRow()){
+            return this.column == pos.getCol();
+        }
+        return false;
+    }
 
     public String toString(){
         //Getting the ASCII values of row and column which will be converted into String
