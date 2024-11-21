@@ -47,7 +47,7 @@ public class GameGUI {
     
         
     public void updateGame(Engine.Move move){
-        this.game.updateBoard(move);
+        this.game.paintBoard();
         //this.frame.validate();
         //this.frame.pack();
     }

@@ -91,16 +91,18 @@ public class Engine {
         //Checks rules by piece type TODO
         boolean isValidMove = false;
         switch(chessBoard.getPieceOnPos(move.src).getType()){
-            case PAWN: isValidMove = isValidPawnMove(move);
-            //case ROOK: isValidMove = isValidRookMove(move);
-            //case KNIGHT: isValidMove = isValidKnightMove(move);
-           // case BISHOP: isValidMove = isValidBishopMove(move);
-           // case QUEEN: isValidMove = isValidQueenMove(move);
-            //case KING: isValidMove = isValidKingMove(move);
+            case PAWN: isValidMove = isValidPawnMove(move); break;
+            case ROOK: isValidMove = isValidRookMove(move,8); break;
+            case KNIGHT: isValidMove = isValidKnightMove(move); break;
+            case BISHOP: isValidMove = isValidBishopMove(move, 8); break;
+            case QUEEN: isValidMove = isValidQueenMove(move); break;
+            case KING: isValidMove = isValidKingMove(move); break;
         }
         return isValidMove;
         
     }
+
+    //Checks rules for pawn move
     private boolean isValidPawnMove(Move move){
         Piece pawn = chessBoard.getPieceOnPos(move.src); 
         int direction = pawn.getColor().equals(Color.WHITE) ? 1 : -1;
@@ -120,8 +122,49 @@ public class Engine {
         else if(move.dest.equals(move.src.add(new Position(1 * direction, 1)))){
             return chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
         }
-        //Destination does not match the listed scenarios above, move is illegal
+        //Movement does not match the listed scenarios above, move is illegal
         return false;
+    }
+
+    //Checks rules for rook movement
+    private boolean isValidRookMove(Move move, int limit){
+        
+        if(isDestReachable(move.src, move.src, move.dest, new Position(1,0), limit)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(0,1), limit)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(-1,0), limit)) return true;
+        else return isDestReachable(move.src, move.src, move.dest, new Position(0,-1), limit);
+
+    }
+
+    //Checks rule for knight move
+    private boolean isValidKnightMove(Move move){
+        if(isDestReachable(move.src, move.src, move.dest, new Position(2,1), 1)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(2,-1), 1)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(-2,1), 1)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(-2,-1), 1))return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(1,2), 1)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(-1,2), 1)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(1,-2), 1)) return true;
+        else return (isDestReachable(move.src, move.src, move.dest, new Position(-1,-2), 1)) ;
+    }
+
+    //Checks rule for bishop
+    private boolean isValidBishopMove(Move move, int limit){
+        if(isDestReachable(move.src, move.src, move.dest, new Position(1,1), limit)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(-1,1), limit)) return true;
+        else if(isDestReachable(move.src, move.src, move.dest, new Position(1,-1), limit)) return true;
+        else return isDestReachable(move.src, move.src, move.dest, new Position(-1,-1), limit);
+    }
+
+    //Checks rule for queen move
+    private boolean isValidQueenMove(Move move){
+        if(isValidRookMove(move, 8)) {return true;}
+        else {return isValidBishopMove(move, 8);}
+    }
+
+    private boolean isValidKingMove(Move move){
+        if(isValidRookMove(move, 1)){return true;}
+        else return isValidBishopMove(move, 1);
     }
     private static boolean isPosOnBoard(Position pos){
         return pos.getRow() < 8 && pos.getRow() >= 0 && pos.getCol() < 8 && pos.getCol() >= 0;
@@ -142,17 +185,14 @@ public class Engine {
             return true;
         }
         //Walks into a piece on the way, blocking the path 
-        else if(! origin.equals(current)){
-            return chessBoard.isPosOccupied(current);
+        else if(! origin.equals(current) && chessBoard.isPosOccupied(current)){
+            return false;
         }
         //None of the above, keep searching in the given direction
         else {
             return isDestReachable(origin, current.add(vector), dest, vector, limit-1);
         }
     }
-    private boolean isPawnMovable( Move move ){
-        //Pawn TODO
-        return false;
+    
+}
 
-}
-}
