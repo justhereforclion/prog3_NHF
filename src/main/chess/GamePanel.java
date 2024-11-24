@@ -49,6 +49,10 @@ public class GamePanel extends JPanel implements ActionListener {
         //Add board panel to Game panel
         add(board, BorderLayout.CENTER);
     }
+
+    public void setChessBoard(ChessBoard cb){
+        this.chessBoard = cb;
+    }
     private JPanel createBoard(){
         JPanel b = new JPanel(new GridLayout(8,8));
 

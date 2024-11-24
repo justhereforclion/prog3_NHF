@@ -46,7 +46,8 @@ public class GameGUI {
 
     
         
-    public void updateGame(Engine.Move move){
+    public void updateGame(Engine.Move move, ChessBoard cb){
+        this.game.setChessBoard(cb);
         this.game.paintBoard();
         //this.frame.validate();
         //this.frame.pack();

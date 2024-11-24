@@ -25,6 +25,10 @@ class Position {
         return false;
     }
 
+    public Position clone(){
+        return new Position(this.row, this.column);
+    }
+
     public String toString(){
         //Getting the ASCII values of row and column which will be converted into String
         char[] chars = new char[2];

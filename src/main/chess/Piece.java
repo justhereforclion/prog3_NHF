@@ -12,12 +12,14 @@ public class Piece {
     private final PieceType type;
     private boolean hasMoved;
 
-    public Piece(Color c, PieceType t){
+    public Piece(Color c, PieceType t, boolean v){
         this.color = c;
         this.type = t;
-        this.hasMoved = false;
+        this.hasMoved = v;
     }
-
+    public Piece clone(){
+        return new Piece(this.color, this.type, this.hasMoved);
+    }
     public Color getColor(){return this.color;}
 
     public PieceType getType(){return this.type;}

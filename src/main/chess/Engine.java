@@ -2,25 +2,38 @@ package main.chess;
 
 import java.awt.Color;
 
+import main.chess.Piece.PieceType;
+
 public class Engine {
 
     //Nested class for better readability
     static class Move {
         public Position src;
         public Position dest;
+
+        public Move(){
+            this.src = null;
+            this.dest = null;
+        }
+
+        public Move(Position src, Position dest){
+            this.src = src;
+            this.dest = dest;
+        }
     }
 
     //Shows whether a player has chosen a piece already
-    private static boolean hasPieceInHand;
+    private  boolean hasPieceInHand;
 
     //Shows which player is next
-    private static Color nextToMove;
+    private Color nextToMove;
 
     //Shows current move to be made
-    private static Move move;
+    private Move move;
 
-    //Shows current state of the game.
+    //Shows current state of the board, and the previous state of the board
     private ChessBoard chessBoard;
+    private ChessBoard pastBoard;
 
     //GUI which mirrors the state of chessBoard
     private GameGUI gui;
@@ -45,15 +58,16 @@ public class Engine {
             //Player already has a piece in hand, pos is the desired destination
             move.dest = pos;
             if(isValidMove(move)){
-                executeMove(move);
                 updateState();
+                executeMove(move);
+                gui.updateGame(move,this.chessBoard);
             } else {
                 hasPieceInHand = false;
             }
         }
         else{
             move.src = pos;
-            hasPieceInHand = chessBoard.getSquareOnPos(move.src).isSquareOccupied();
+            hasPieceInHand = chessBoard.isPosOccupied(move.src);
         }
 
     }
@@ -68,7 +82,7 @@ public class Engine {
 
     //Updates static attributes and GUI after each valid move
     public void updateState(){
-        gui.updateGame(move);
+        pastBoard = chessBoard.clone();
         hasPieceInHand = false;
         nextToMove = nextToMove == Color.WHITE ? Color.BLACK : Color.WHITE;
     }
@@ -76,54 +90,108 @@ public class Engine {
     //Methods for checking rules on moves
     public boolean isValidMove( Move move ){
 
-        //Chosen squares are the same
+        //Chosen squares are the same or player is not next to move
         if(move.src == move.dest){
-            return false;
-        }
+            return false;}
 
         //If two pieces have been chosen, then they can not be the same color
-        if(chessBoard.getSquareOnPos(move.src).isSquareOccupied() && chessBoard.getSquareOnPos(move.dest).isSquareOccupied()){
+        if(chessBoard.isPosOccupied(move.src) && chessBoard.isPosOccupied(move.dest)){
             if(chessBoard.getPieceOnPos(move.src).getColor() == chessBoard.getPieceOnPos(move.dest).getColor()){
-                return false;
-            }
+                return false;}}
+        
+        //Player is not next to move
+        if(chessBoard.isPosOccupied(move.src)){
+            if( ! chessBoard.getPieceOnPos(move.src).getColor().equals(nextToMove)) return false;
         }
 
-        //Checks rules by piece type TODO
-        boolean isValidMove = false;
+        //Checks rules by piece type
+        
         switch(chessBoard.getPieceOnPos(move.src).getType()){
-            case PAWN: isValidMove = isValidPawnMove(move); break;
-            case ROOK: isValidMove = isValidRookMove(move,8); break;
-            case KNIGHT: isValidMove = isValidKnightMove(move); break;
-            case BISHOP: isValidMove = isValidBishopMove(move, 8); break;
-            case QUEEN: isValidMove = isValidQueenMove(move); break;
-            case KING: isValidMove = isValidKingMove(move); break;
+            case PAWN: if(! isValidPawnMove(move)) return false; break;
+            case ROOK: if(! isValidRookMove(move,8)) return false; break;
+            case KNIGHT: if(! isValidKnightMove(move)) return false; break;
+            case BISHOP: if(! isValidBishopMove(move,8)) return false; break;
+            case QUEEN: if(! isValidQueenMove(move)) return false; break;
+            case KING: if(! isValidKingMove(move)) return false;break;
         }
-        return isValidMove;
+        
+
+        //Checks if move would cause check
+        return ! causesCheck(move);
         
     }
 
+    //Checks if move would threaten the king, takes the move then decides if its valid
+    private boolean causesCheck(Move move){
+        //Copy state before move and then execute it
+        ChessBoard prevBoard = this.chessBoard.clone();
+        this.executeMove(move);
+
+        Position pos = findKing();
+
+        if(inThreat(pos)){
+            chessBoard = prevBoard;
+            return true;}
+        else{
+            chessBoard = prevBoard;
+            return false;}
+    }
+
+    //Checks whether a piece on given position is in threat
+    private boolean inThreat( Position pos){
+        
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                Position current = new Position(r,c);
+                Move m = new Move(current, pos);
+                if(chessBoard.isPosOccupied(current)){
+                    if( ! chessBoard.getPieceOnPos(current).getColor().equals(nextToMove)){
+                        switch(chessBoard.getPieceOnPos(current).getType()){
+                            case PAWN: if( isValidPawnMove(m)) return true; break;
+                            case ROOK: if( isValidRookMove(m,8)) return true; break;
+                            case KNIGHT: if( isValidKnightMove(m)) return true; break;
+                            case BISHOP: if( isValidBishopMove(m,8)) return true; break;
+                            case QUEEN: if(isValidQueenMove(m)) return true; break;
+                            case KING: if( isValidKingMove(m)) return true;break;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+        
+    }
+    //Finds the position of the king of current color
+    private Position findKing(){
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                if(chessBoard.isPosOccupied(new Position(r, c))){
+                    if(chessBoard.getPieceOnPos(new Position(r,c)).getType() == PieceType.KING){
+                        if(chessBoard.getPieceOnPos(new Position(r,c)).getColor().equals(nextToMove)){
+                            return new Position(r,c);
+                        }
+                    }
+                }
+            }
+        }
+        return new Position(0,0);
+    } 
     //Checks rules for pawn move
     private boolean isValidPawnMove(Move move){
         Piece pawn = chessBoard.getPieceOnPos(move.src); 
         int direction = pawn.getColor().equals(Color.WHITE) ? 1 : -1;
 
-        if(move.dest.equals(move.src.add(new Position(2 * direction, 0)))){
-            //Must be its first move if it moves two rows at a time, and cannot take a piece
-            return ! pawn.hasMoved() &&  ! chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
+        if(chessBoard.isPosOccupied(move.dest)){
+            if(isDestReachable(move.src, move.src, move.dest, new Position(direction,1), 1)){return true;}
+            else return isDestReachable(move.src, move.src, move.dest, new Position(direction,-1), 1);
         }
-        else if(move.dest.equals(move.src.add(new Position(1 * direction, 0)))){
-            //Destination must be empty if it moves one row ahead
-            return ! chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
+        else{
+            if(isDestReachable(move.src, move.src, move.dest, new Position(direction,0), 1)){return true;}
+            else if( ! pawn.hasMoved()){
+                return isDestReachable(move.src, move.src, move.dest, new Position(direction,0), 2);
+            }
+            return false;
         }
-        else if(move.dest.equals(move.src.add(new Position(1 * direction, -1)))){
-            //Must take a piece if it moves diagonally
-            return chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
-        }
-        else if(move.dest.equals(move.src.add(new Position(1 * direction, 1)))){
-            return chessBoard.getSquareOnPos(move.dest).isSquareOccupied();
-        }
-        //Movement does not match the listed scenarios above, move is illegal
-        return false;
     }
 
     //Checks rules for rook movement
@@ -170,7 +238,7 @@ public class Engine {
         return pos.getRow() < 8 && pos.getRow() >= 0 && pos.getCol() < 8 && pos.getCol() >= 0;
     }
 
-    //Recursively checks whether dest is reachable from src with given limit and direction(vector);
+    //Recursively checks whether dest is reachable from src with given limit and direction(vector)
     private boolean isDestReachable(Position origin, Position current, Position dest, Position vector,int limit){
         //Didnt find dest on the way here
         if(limit < 0){
