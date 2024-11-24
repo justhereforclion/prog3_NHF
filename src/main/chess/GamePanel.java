@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private JPanel board;
     private Box sideBar;
     
-    public GamePanel(ChessBoard cb, Engine engine){
+    public GamePanel(ChessBoard cb, Engine engine, NavigationListener nl){
         //Reference to chess board and to the game engine
         chessBoard = cb;
         this.engine = engine;
@@ -36,6 +36,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
         //Adding buttons to sidebar, changing their sizes for better visibility TODO
         JButton menuButton = new JButton("Menu");
+        menuButton.addActionListener(nl);
+
         JButton saveButton = new JButton("Save");
         sideBar.add(menuButton);
         sideBar.add(saveButton);

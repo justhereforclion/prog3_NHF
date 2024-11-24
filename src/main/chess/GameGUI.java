@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.JFrame;
 import java.awt.GridLayout;
+import java.awt.CardLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
@@ -17,7 +18,7 @@ import java.awt.Color;
 public class GameGUI {
     //Parent frame and all of its panels
     private JFrame frame;
-    private JPanel menu;
+    private MenuPanel menu;
     private GamePanel game;
     private JPanel rules;
 
@@ -29,17 +30,23 @@ public class GameGUI {
         engine.setGameGUI(this);
         
         frame = new JFrame("CHESS");
+        frame.setLayout( new CardLayout());
+        //Creating the actions wich will be add to these components(could use actionListeners as well)
+        NavigationListener nl = new NavigationListener(this.frame);
 
         //TODO Initalizing all the panels
-        game = new GamePanel(cb, engine);
+        game = new GamePanel(cb, engine, nl);
+        menu = new MenuPanel(nl);
 
         //Adding Components to the frame
-        frame.add(game,BorderLayout.CENTER);
+        frame.add("Menu", menu);
+        frame.add("New Game",game);
         
 
         //Adjusting the main frame
         frame.setResizable(true);
-        frame.setMinimumSize( new Dimension(800,700));
+        frame.setMinimumSize(new Dimension(650,580));
+        
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
