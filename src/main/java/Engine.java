@@ -1,4 +1,4 @@
-package main.java;
+
 
 import java.awt.Color;
 import java.io.File;
@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import main.chess.Piece.PieceType;
 
 public class Engine {
 
@@ -194,7 +193,7 @@ public class Engine {
         for(int r = 0; r < 8; r++){
             for(int c = 0; c < 8; c++){
                 if(chessBoard.isPosOccupied(new Position(r, c))){
-                    if(chessBoard.getPieceOnPos(new Position(r,c)).getType() == PieceType.KING){
+                    if(chessBoard.getPieceOnPos(new Position(r,c)).getType() == Piece.PieceType.KING){
                         if(chessBoard.getPieceOnPos(new Position(r,c)).getColor().equals(nextToMove)){
                             return new Position(r,c);
                         }

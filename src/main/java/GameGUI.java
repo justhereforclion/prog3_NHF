@@ -1,4 +1,3 @@
-package main.java;
 
 import javax.swing.BoxLayout;
 import javax.swing.Box;

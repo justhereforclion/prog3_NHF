@@ -1,4 +1,3 @@
-package main.java;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;

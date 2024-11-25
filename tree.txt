@@ -1,0 +1,12 @@
+src/
+  main/
+    java/
+        App.java
+        ChessBoard.java
+        ChessMatch.java
+        Engine.java
+    resources/
+        piece-images/
+  test/
+    java/
+          AppTest.java

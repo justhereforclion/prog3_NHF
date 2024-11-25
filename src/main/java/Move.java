@@ -1,4 +1,4 @@
-package main.java;
+
 
 //Helper class for GameEngine, groups two positions together
 public class Move {

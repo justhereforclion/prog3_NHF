@@ -1,22 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- Alapvető projektinformációk -->
-    <groupId>com.chal1s</groupId>
-    <artifactId>CHAL1S-CHESS</artifactId>
+    <groupId>org.example</groupId>
+    <artifactId>Prog3_NHF</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <!-- Build eszköz és konfiguráció -->
+    <!-- Projekt tulajdonságok -->
     <properties>
         <maven.compiler.source>23</maven.compiler.source> <!-- JDK 23 -->
-        <maven.compiler.target>23</maven.compiler.target> <!-- JDK 23 -->
+        <maven.compiler.target>23</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <!-- Függőségek -->
     <dependencies>
-        <!-- JUnit 5 (Jupiter) -->
+        <!-- JUnit 5 keretrendszer -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -25,13 +24,49 @@
         </dependency>
     </dependencies>
 
-    <!-- Maven Surefire Plugin, hogy a teszteket futtathassuk -->
+    <!-- Build konfiguráció -->
     <build>
         <plugins>
+            <!-- Maven Compiler Plugin (JDK 23 használata) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>23</source>
+                    <target>23</target>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Exec Plugin (Java program futtatásához) -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>App</mainClass> <!-- Fő osztály -->
+                </configuration>
+            </plugin>
+
+            <!-- Maven Jar Plugin (Futtatható JAR fájl létrehozásához) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>App</mainClass> <!-- Fő osztály -->
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
