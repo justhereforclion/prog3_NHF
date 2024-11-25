@@ -14,6 +14,22 @@ public class NavigationListener implements ActionListener {
     }
     public void actionPerformed(ActionEvent e){
         CardLayout l = (CardLayout)this.frame.getContentPane().getLayout();
-        l.show(this.frame.getContentPane(), e.getActionCommand());
+        
+        String ac = e.getActionCommand();
+        String p = "MenuPanel";
+        if(ac.equals("New Game")){
+            p = "GamePanel";
+        }
+        if(ac.equals("Load Game")){
+            p = "GamePanel";
+        }
+        if(ac.equals("Continue")){
+            p = "GamePanel";
+        }
+        if(ac.equals("Menu")){
+            p = "MenuPanel";
+        }
+
+        l.show(this.frame.getContentPane(), p);
     }
 }

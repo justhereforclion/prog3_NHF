@@ -1,26 +1,14 @@
 package main.chess;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import main.chess.Piece.PieceType;
 
 public class Engine {
-
-    //Nested class for better readability
-    static class Move {
-        public Position src;
-        public Position dest;
-
-        public Move(){
-            this.src = null;
-            this.dest = null;
-        }
-
-        public Move(Position src, Position dest){
-            this.src = src;
-            this.dest = dest;
-        }
-    }
 
     //Shows whether a player has chosen a piece already
     private  boolean hasPieceInHand;
@@ -35,6 +23,9 @@ public class Engine {
     private ChessBoard chessBoard;
     private ChessBoard pastBoard;
 
+    //Chess Match, stores the moves which were played during this game, also the winner if there is one
+    private ChessMatch chessMatch;
+
     //GUI which mirrors the state of chessBoard
     private GameGUI gui;
 
@@ -44,45 +35,78 @@ public class Engine {
         this.nextToMove = Color.WHITE;
         this.move = new Move();
         this.chessBoard = cb;
+        this.chessMatch = new ChessMatch();
         this.gui = null;
     }
+    //Set chessBoard attribute
+    //public void setChessBoard(ChessBoard cb){this.chessBoard = cb;}
 
-    public void setChessBoard(ChessBoard cb){this.chessBoard = cb;}
-
+    //Set gui attribute
     public void setGameGUI(GameGUI gui){this.gui = gui;}
 
+    //Set up engine for a new game, chessBoard will be in staring position
+    public void newGame(){
+        this.hasPieceInHand = false;
+        this.nextToMove = Color.WHITE;
+        this.move = new Move();
+        this.chessBoard = new ChessBoard();
+        this.chessMatch = new ChessMatch();
+        chessMatch.add(chessBoard);
+        this.gui.updateGamePanel(chessBoard);
+    }
     //Handling input from GameGUI, ActionListener calls this
     public void handleInput(Position pos){
         
         if(hasPieceInHand){
             //Player already has a piece in hand, pos is the desired destination
-            move.dest = pos;
+            move.setDest(pos);
             if(isValidMove(move)){
                 updateState();
-                executeMove(move);
-                gui.updateGame(move,this.chessBoard);
+                gui.updateGamePanel(this.chessBoard);
             } else {
                 hasPieceInHand = false;
             }
         }
         else{
-            move.src = pos;
-            hasPieceInHand = chessBoard.isPosOccupied(move.src);
+            //Check whether the player has clicked on a piece
+            move.setSrc(pos);
+            hasPieceInHand = chessBoard.isPosOccupied(move.getSrc());
         }
 
     }
-
-    //Executing a valid move on chessBoard, changing hasMoved attribute of piece 
-    public void executeMove(Move move){
-        Piece pieceInHand = chessBoard.getPieceOnPos(move.src);
-        chessBoard.setPieceOnPos(pieceInHand, move.dest);
-        chessBoard.setPieceOnPos(null,move.src);
-        chessBoard.getPieceOnPos(move.dest).setHasMoved(true);
+    //Saving current state of game, and every move of it to given txt file
+    public void saveGame() throws IOException{
+        String savePath = "src/main/saved-match/non-terminated/match.txt";
+        
+        chessMatch.write(new File(savePath));
     }
 
-    //Updates static attributes and GUI after each valid move
+    //Loads saved match from non-terminated matches
+    public void loadGame() throws IOException{
+        String loadPath = "src/main/saved-match/non-terminated/match.txt";//Fix loadPath for engine to load from
+
+        this.hasPieceInHand = false; //No piece is selected
+        chessMatch.read(new File(loadPath));//Fills up the chess match attribute from file
+        this.chessBoard = chessMatch.getScreenShots().getLast().clone(); // Select current chess board from chess match
+        if(chessMatch.getScreenShots().size() % 2 == 1){ //Desiding which color is next to move based on how many move was played in the match
+            nextToMove = Color.WHITE;
+        } else {nextToMove = Color.BLACK;}
+
+        gui.updateGamePanel(chessBoard);//Updating game panel to show current board
+    }
+    //Executing a valid move on chessBoard, changing hasMoved attribute of piece 
+    public void executeMove(Move move){
+        Piece pieceInHand = chessBoard.getPieceOnPos(move.getSrc());
+        chessBoard.setPieceOnPos(pieceInHand, move.getDest());
+        chessBoard.setPieceOnPos(null,move.getSrc());
+        chessBoard.getPieceOnPos(move.getDest()).setHasMoved(true);
+    }
+
+    //Updates static,non static attributes of engine
     public void updateState(){
         pastBoard = chessBoard.clone();
+        executeMove(move);
+        chessMatch.add(chessBoard.clone());
         hasPieceInHand = false;
         nextToMove = nextToMove == Color.WHITE ? Color.BLACK : Color.WHITE;
     }
@@ -91,22 +115,22 @@ public class Engine {
     public boolean isValidMove( Move move ){
 
         //Chosen squares are the same or player is not next to move
-        if(move.src == move.dest){
+        if(move.getSrc() == move.getDest()){
             return false;}
 
         //If two pieces have been chosen, then they can not be the same color
-        if(chessBoard.isPosOccupied(move.src) && chessBoard.isPosOccupied(move.dest)){
-            if(chessBoard.getPieceOnPos(move.src).getColor() == chessBoard.getPieceOnPos(move.dest).getColor()){
+        if(chessBoard.isPosOccupied(move.getSrc()) && chessBoard.isPosOccupied(move.getDest())){
+            if(chessBoard.getPieceOnPos(move.getSrc()).getColor() == chessBoard.getPieceOnPos(move.getDest()).getColor()){
                 return false;}}
         
         //Player is not next to move
-        if(chessBoard.isPosOccupied(move.src)){
-            if( ! chessBoard.getPieceOnPos(move.src).getColor().equals(nextToMove)) return false;
+        if(chessBoard.isPosOccupied(move.getSrc())){
+            if( ! chessBoard.getPieceOnPos(move.getSrc()).getColor().equals(nextToMove)) return false;
         }
 
         //Checks rules by piece type
         
-        switch(chessBoard.getPieceOnPos(move.src).getType()){
+        switch(chessBoard.getPieceOnPos(move.getSrc()).getType()){
             case PAWN: if(! isValidPawnMove(move)) return false; break;
             case ROOK: if(! isValidRookMove(move,8)) return false; break;
             case KNIGHT: if(! isValidKnightMove(move)) return false; break;
@@ -178,17 +202,17 @@ public class Engine {
     } 
     //Checks rules for pawn move
     private boolean isValidPawnMove(Move move){
-        Piece pawn = chessBoard.getPieceOnPos(move.src); 
+        Piece pawn = chessBoard.getPieceOnPos(move.getSrc()); 
         int direction = pawn.getColor().equals(Color.WHITE) ? 1 : -1;
 
-        if(chessBoard.isPosOccupied(move.dest)){
-            if(isDestReachable(move.src, move.src, move.dest, new Position(direction,1), 1)){return true;}
-            else return isDestReachable(move.src, move.src, move.dest, new Position(direction,-1), 1);
+        if(chessBoard.isPosOccupied(move.getDest())){
+            if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(direction,1), 1)){return true;}
+            else return isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(direction,-1), 1);
         }
         else{
-            if(isDestReachable(move.src, move.src, move.dest, new Position(direction,0), 1)){return true;}
+            if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(direction,0), 1)){return true;}
             else if( ! pawn.hasMoved()){
-                return isDestReachable(move.src, move.src, move.dest, new Position(direction,0), 2);
+                return isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(direction,0), 2);
             }
             return false;
         }
@@ -197,31 +221,31 @@ public class Engine {
     //Checks rules for rook movement
     private boolean isValidRookMove(Move move, int limit){
         
-        if(isDestReachable(move.src, move.src, move.dest, new Position(1,0), limit)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(0,1), limit)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(-1,0), limit)) return true;
-        else return isDestReachable(move.src, move.src, move.dest, new Position(0,-1), limit);
+        if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(1,0), limit)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(0,1), limit)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-1,0), limit)) return true;
+        else return isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(0,-1), limit);
 
     }
 
     //Checks rule for knight move
     private boolean isValidKnightMove(Move move){
-        if(isDestReachable(move.src, move.src, move.dest, new Position(2,1), 1)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(2,-1), 1)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(-2,1), 1)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(-2,-1), 1))return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(1,2), 1)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(-1,2), 1)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(1,-2), 1)) return true;
-        else return (isDestReachable(move.src, move.src, move.dest, new Position(-1,-2), 1)) ;
+        if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(2,1), 1)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(2,-1), 1)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-2,1), 1)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-2,-1), 1))return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(1,2), 1)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-1,2), 1)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(1,-2), 1)) return true;
+        else return (isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-1,-2), 1)) ;
     }
 
     //Checks rule for bishop
     private boolean isValidBishopMove(Move move, int limit){
-        if(isDestReachable(move.src, move.src, move.dest, new Position(1,1), limit)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(-1,1), limit)) return true;
-        else if(isDestReachable(move.src, move.src, move.dest, new Position(1,-1), limit)) return true;
-        else return isDestReachable(move.src, move.src, move.dest, new Position(-1,-1), limit);
+        if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(1,1), limit)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-1,1), limit)) return true;
+        else if(isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(1,-1), limit)) return true;
+        else return isDestReachable(move.getSrc(), move.getSrc(), move.getDest(), new Position(-1,-1), limit);
     }
 
     //Checks rule for queen move

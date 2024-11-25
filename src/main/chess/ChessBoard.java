@@ -1,6 +1,8 @@
 package main.chess;
 
 import java.awt.Color;
+import java.io.InputStream;
+import java.io.Serializable;
 
 public class ChessBoard {
    
@@ -23,6 +25,14 @@ public class ChessBoard {
             }
             else return new Square(this.color, null);
         }
+
+        public String toString(){
+            if(isOccupied()){
+                return this.piece.toString();
+            }
+            return new String("x");
+        }
+
         public boolean isOccupied(){
             return this.piece != null;
         }
@@ -60,6 +70,26 @@ public class ChessBoard {
             }
         }
         return b;
+    }
+    //Creates a string which represents each squares on the board
+    public String toString(){
+        String toString = new String();
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                toString = toString.concat(this.board[r][c].toString());
+            }
+        }
+        return toString;
+    }
+    //Creates ChessBoard from String
+    public static ChessBoard fromString(String str){
+        ChessBoard cb = new ChessBoard();
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                cb.setPieceOnPos(Piece.fromString(new String(str.substring(r*8 + c,r*8+c+1))), new Position(r,c));
+            }
+        }
+        return cb;
     }
 
     private void paintBoard(){
@@ -167,4 +197,5 @@ public class ChessBoard {
     public void setPieceOnPos(Piece piece, Position pos){
         this.board[pos.getRow()][pos.getCol()].setPiece(piece);
     }
+
 }

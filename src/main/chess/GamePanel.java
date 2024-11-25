@@ -2,43 +2,43 @@ package main.chess;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.IOException;
 import javax.swing.Box;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class GamePanel extends JPanel implements ActionListener {
+public class GamePanel extends JPanel implements ActionListener{
 
-    private ChessBoard chessBoard;
-    private Engine engine;
-    private JPanel board;
-    private Box sideBar;
+    private ChessBoard chessBoard;  //Reference for chess board
+    private Engine engine;          //Reference for game engine
+    private MoveListener ml;        //Move listener, will be added to every square(button)
+
+
+    private JPanel board;           //The actual chess board which contains the squares
+    private JPanel sideBar;         //Sidebar enableing user to navigate and save the current game
     
     public GamePanel(ChessBoard cb, Engine engine, NavigationListener nl){
-        //Reference to chess board and to the game engine
+        //Reference to chess board and to the game engine and action listener(listens to buttons on board)
         chessBoard = cb;
         this.engine = engine;
+        this.ml = new MoveListener(engine);
 
-        //GamePanel has borderlayout 
-        setLayout( new BorderLayout(10,0));
-
-        //Board panel contains the buttons(squares)
+        //Initalizing panels and setting their layouts
+        this.setLayout( new BorderLayout(10,0));
         board = new JPanel();
+        sideBar = new JPanel();
 
-        //Sidebar is next to board, contains two buttons
-        sideBar = Box.createVerticalBox();
-
-        //Adding buttons to sidebar, changing their sizes for better visibility TODO
+        //Adding buttons to sidebar, changing their sizes for better visibility, adding Action Listener 
         JButton menuButton = new JButton("Menu");
         menuButton.addActionListener(nl);
 
         JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(this);
+
         sideBar.add(menuButton);
         sideBar.add(saveButton);
         //Adding sidebar to Game panel
@@ -61,7 +61,7 @@ public class GamePanel extends JPanel implements ActionListener {
         for(int r=7; r >= 0; --r){
             for(int c=0; c < 8; ++c){
                 JButton square = new JButton();
-                square.addActionListener(this);
+                square.addActionListener(ml);
                 square.setActionCommand(new Position(r,c).toString());
                 b.add(square);
             }
@@ -110,8 +110,24 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        engine.handleInput(Position.posFromString(e.getActionCommand()));
+    public void actionPerformed(ActionEvent event){
+        if(event.getActionCommand().equals("New Game")){
+            this.engine.newGame();
+        }
+        if(event.getActionCommand().equals("Load Game")){
+            try {
+                this.engine.loadGame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(event.getActionCommand().equals("Save")){
+            try {
+                this.engine.saveGame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+    
 }
