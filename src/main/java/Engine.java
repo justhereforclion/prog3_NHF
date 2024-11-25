@@ -1,4 +1,4 @@
-package main.chess;
+package main.java;
 
 import java.awt.Color;
 import java.io.File;
@@ -54,6 +54,7 @@ public class Engine {
         chessMatch.add(chessBoard);
         this.gui.updateGamePanel(chessBoard);
     }
+
     //Handling input from GameGUI, ActionListener calls this
     public void handleInput(Position pos){
         
@@ -74,26 +75,29 @@ public class Engine {
         }
 
     }
+    
     //Saving current state of game, and every move of it to given txt file
     public void saveGame() throws IOException{
-        String savePath = "src/main/saved-match/non-terminated/match.txt";
+        String savePath = "src/main/resources/saved-match/non-terminated.txt";
         
         chessMatch.write(new File(savePath));
     }
 
     //Loads saved match from non-terminated matches
     public void loadGame() throws IOException{
-        String loadPath = "src/main/saved-match/non-terminated/match.txt";//Fix loadPath for engine to load from
+        String loadPath = "src/main/resources/saved-match/non-terminated.txt";//Fix loadPath for engine to load from
 
         this.hasPieceInHand = false; //No piece is selected
         chessMatch.read(new File(loadPath));//Fills up the chess match attribute from file
         this.chessBoard = chessMatch.getScreenShots().getLast().clone(); // Select current chess board from chess match
+        this.chessBoard.setMovementStates(chessMatch.getMovementStates()); // Setting movement state on board
         if(chessMatch.getScreenShots().size() % 2 == 1){ //Desiding which color is next to move based on how many move was played in the match
             nextToMove = Color.WHITE;
         } else {nextToMove = Color.BLACK;}
 
         gui.updateGamePanel(chessBoard);//Updating game panel to show current board
     }
+    
     //Executing a valid move on chessBoard, changing hasMoved attribute of piece 
     public void executeMove(Move move){
         Piece pieceInHand = chessBoard.getPieceOnPos(move.getSrc());

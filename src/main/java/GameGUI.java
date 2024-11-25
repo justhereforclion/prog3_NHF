@@ -1,4 +1,4 @@
-package main.chess;
+package main.java;
 
 import javax.swing.BoxLayout;
 import javax.swing.Box;
@@ -20,7 +20,7 @@ public class GameGUI {
     private JFrame frame;
     private MenuPanel menu;
     private GamePanel game;
-    private JPanel rules;
+    private RulesPanel rules;
 
 
     public GameGUI(ChessBoard cb, Engine engine){
@@ -35,11 +35,12 @@ public class GameGUI {
         //TODO Initalizing all the panels
         game = new GamePanel(cb, engine, nl);
         menu = new MenuPanel(nl, game);
+        rules = new RulesPanel(nl);
 
-        //Adding Components to the frame TODO
+        //TODO Adding Components to the frame 
         frame.add("MenuPanel", menu);
         frame.add("GamePanel", game);
-        
+        frame.add("RulesPanel", rules);
 
         //Adjusting the main frame
         frame.setResizable(true);//Main frame is resizable

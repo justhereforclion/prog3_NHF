@@ -1,4 +1,4 @@
-package main.chess;
+package main.java;
 
 import java.awt.Color;
 import java.io.InputStream;
@@ -92,6 +92,31 @@ public class ChessBoard {
         return cb;
     }
 
+    //Return the movement state on every position on board. String which has 64 characters in it.
+    public String getMovementStates(){
+        String states = new String();
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                if(this.getSquareOnPos(new Position(r,c)).isOccupied()){
+                    if(this.getPieceOnPos(new Position(r,c)).hasMoved()){
+                        states = states.concat("1");
+                    }else {states = states.concat("0");}
+                }else states = states.concat("0");
+            }
+        }
+        return states;
+    }
+    //Setting movement status on every piece on chess board, defined by given string
+    public void setMovementStates(String str){
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                if(this.getSquareOnPos(new Position(r,c)).isOccupied()){
+                    this.getPieceOnPos(new Position(r,c)).setHasMoved(str.substring(r*8 + c, r*8 +c +1).equals("1"));
+                }
+               
+            }
+        }
+    }
     private void paintBoard(){
 
         for(int r = 0; r < 8; ++r){

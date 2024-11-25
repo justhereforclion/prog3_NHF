@@ -1,7 +1,8 @@
-package main.chess;
+package main.java;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,7 @@ public class GamePanel extends JPanel implements ActionListener{
         //Initalizing panels and setting their layouts
         this.setLayout( new BorderLayout(10,0));
         board = new JPanel();
-        sideBar = new JPanel();
+        sideBar = new JPanel( new FlowLayout(FlowLayout.LEFT));
 
         //Adding buttons to sidebar, changing their sizes for better visibility, adding Action Listener 
         JButton menuButton = new JButton("Menu");
@@ -42,7 +43,7 @@ public class GamePanel extends JPanel implements ActionListener{
         sideBar.add(menuButton);
         sideBar.add(saveButton);
         //Adding sidebar to Game panel
-        add(sideBar, BorderLayout.EAST);
+        add(sideBar, BorderLayout.NORTH);
        
         //Initalize board panel
         this.board = createBoard();
@@ -96,7 +97,7 @@ public class GamePanel extends JPanel implements ActionListener{
                         default: typeOfImg = "pawn";
                     }
                     String nameOfImg = colorOfImg + "-" + typeOfImg + ".png";
-                    String imgPath = "src/main/piece-images/" + nameOfImg;
+                    String imgPath = "src/main/resources/piece-images/" + nameOfImg;
                     
                     //Set the image icon of the square
                     square.setIcon( new ImageIcon(imgPath));

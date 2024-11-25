@@ -1,4 +1,4 @@
-package main.chess;
+package main.java;
 
 import java.awt.Color;
 

@@ -1,4 +1,4 @@
-package main.chess;
+package main.java;
 
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
@@ -28,6 +28,8 @@ public class NavigationListener implements ActionListener {
         }
         if(ac.equals("Menu")){
             p = "MenuPanel";
+        }if(ac.equals("Rules")){
+            p = "RulesPanel";
         }
 
         l.show(this.frame.getContentPane(), p);
