@@ -172,14 +172,14 @@ public class GamePanel extends JPanel implements ActionListener {
         }
         if (event.getActionCommand().equals("Load Game")) {
             try {
-                this.engine.loadGame();
+                this.engine.loadGame("src/main/resources/saved-match/non-terminated.txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         if (event.getActionCommand().equals("Save")) {
             try {
-                this.engine.saveGame();
+                this.engine.saveGame("src/main/resources/saved-match/non-terminated.txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }

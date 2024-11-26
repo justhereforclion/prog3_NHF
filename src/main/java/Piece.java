@@ -12,7 +12,11 @@ public class Piece {
      * Enum representing the different types of chess pieces.
      */
     enum PieceType {
-        PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
+        PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING;
+
+        public boolean equals(PieceType p){
+            return p == this;
+        } 
     }
     
     private Color color; // Color of the piece (e.g., white or black)
@@ -39,6 +43,20 @@ public class Piece {
      */
     public Piece clone(){
         return new Piece(this.color, this.type, this.hasMoved);
+    }
+
+    
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Piece piece = (Piece) obj;
+
+        if (hasMoved != piece.hasMoved) return false;
+        if (color != null ? !color.equals(piece.color) : piece.color != null) return false;
+        return type == piece.type;
     }
 
     /**

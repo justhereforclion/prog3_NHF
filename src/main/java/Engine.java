@@ -78,7 +78,7 @@ public class Engine {
             move.setDest(pos);
             if (isValidMove(move)) {
                 updateState();
-                gui.updateGamePanel(this.chessBoard);
+                if(gui != null) gui.updateGamePanel(this.chessBoard);
             } else {
                 hasPieceInHand = false;
             }
@@ -93,9 +93,9 @@ public class Engine {
      * Saves the current game state to a predefined file.
      *
      * @throws IOException if an error occurs during file writing
+     * @param Save to given path
      */
-    public void saveGame() throws IOException {
-        String savePath = "src/main/resources/saved-match/non-terminated.txt";
+    public void saveGame(String savePath) throws IOException {
         chessMatch.write(new File(savePath));
     }
 
@@ -103,9 +103,9 @@ public class Engine {
      * Loads a saved game from a predefined file.
      *
      * @throws IOException if an error occurs during file reading
+     * @param load from given path
      */
-    public void loadGame() throws IOException {
-        String loadPath = "src/main/resources/saved-match/non-terminated.txt";
+    public void loadGame( String loadPath) throws IOException {
 
         this.hasPieceInHand = false; // Reset piece selection state
         chessMatch.read(new File(loadPath)); // Load match state from file
@@ -119,7 +119,7 @@ public class Engine {
             nextToMove = Color.BLACK;
         }
 
-        gui.updateGamePanel(chessBoard); // Update GUI to reflect the loaded state
+        if(gui != null) gui.updateGamePanel(chessBoard); // Update GUI to reflect the loaded state
     }
 
     /**
@@ -263,7 +263,7 @@ public class Engine {
      *
      * @return the position of the king
      */
-    private Position findKing() {
+    public Position findKing() {
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 if (chessBoard.isPosOccupied(new Position(r, c))) {
@@ -399,4 +399,6 @@ public class Engine {
         else if (!origin.equals(current) && chessBoard.isPosOccupied(current)) return false; // Path blocked
         else return isDestReachable(origin, current.add(vector), dest, vector, limit - 1);
     }
+
+    public ChessBoard getBoard(){return this.chessBoard;}
 }
