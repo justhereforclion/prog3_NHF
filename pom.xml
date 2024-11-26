@@ -79,6 +79,24 @@
                     <useModulePath>false</useModulePath> <!-- Ez segít a JUnit 5 tesztelésnél -->
                 </configuration>
             </plugin>
+                    <!-- Maven Javadoc Plugin a dokumentáció generálásához -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <!-- A javadoc generálása -->
+                        <goal>javadoc</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <!-- További konfigurációk, ha szükséges -->
+                <encoding>UTF-8</encoding>  <!-- A fájl kódolásának beállítása -->
+            </configuration>
+        </plugin>
         </plugins>
     </build>
 </project>

@@ -93,7 +93,7 @@ public class Engine {
      * Saves the current game state to a predefined file.
      *
      * @throws IOException if an error occurs during file writing
-     * @param Save to given path
+     * @param savePath Save to given path
      */
     public void saveGame(String savePath) throws IOException {
         chessMatch.write(new File(savePath));
@@ -103,7 +103,7 @@ public class Engine {
      * Loads a saved game from a predefined file.
      *
      * @throws IOException if an error occurs during file reading
-     * @param load from given path
+     * @param loadPath load from given path
      */
     public void loadGame( String loadPath) throws IOException {
 
@@ -400,5 +400,12 @@ public class Engine {
         else return isDestReachable(origin, current.add(vector), dest, vector, limit - 1);
     }
 
-    public ChessBoard getBoard(){return this.chessBoard;}
+    /**
+    * Retrieves the current chess board.
+    * 
+    * @return The current {@link ChessBoard} object associated with this game.
+    */
+    public ChessBoard getBoard() {
+        return this.chessBoard;
+    }
 }
