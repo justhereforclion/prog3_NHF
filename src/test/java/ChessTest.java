@@ -37,7 +37,7 @@ public class ChessTest {
 
     @Test
     void tesChessBoardConstructor(){
-        assertEquals(Piece.PieceType.PAWN, cb.getPieceOnPos(new Position(1,1)).getType());
+        assertEquals(Piece.PieceType.PAWN, cb.getPieceOnPos(new Position(1,7)).getType());
         assertEquals(Piece.PieceType.KING, cb.getPieceOnPos(new Position(0,4)).getType());
         assertEquals(Piece.PieceType.PAWN, cb.getPieceOnPos(new Position(6,1)).getType());
         assertEquals(Piece.PieceType.KING, cb.getPieceOnPos(new Position(7,4)).getType());
@@ -80,12 +80,12 @@ public class ChessTest {
 
     @Test 
     void testMovesOnBoard(){
-        e.executeMove(new Move(new Position(1,3), new Position(2,3)));
+        //pawn and bishop moves
+        e.executeMove(new Move(new Position(3,0), new Position(4,0)));
         e.executeMove(new Move(new Position(0,2), new Position(2,4)));
 
-        assertEquals( Piece.PieceType.PAWN, cb.getPieceOnPos(new Position(2,3)).getType());
-        assertEquals(Piece.PieceType.BISHOP, cb.getPieceOnPos(new Position(2,4)).getType());
-        assertEquals(new Piece(Color.WHITE, Piece.PieceType.PAWN, true), cb.getPieceOnPos(new Position(2,3)));
+        assertEquals(new Piece(Color.WHITE, Piece.PieceType.PAWN, true), cb.getPieceOnPos(new Position(4,0)));
+        assertEquals(new Piece(Color.WHITE, Piece.PieceType.BISHOP, true), cb.getPieceOnPos(new Position(2,4)));
     }
 
     @Test
