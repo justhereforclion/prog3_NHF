@@ -1,4 +1,3 @@
-
 import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -14,46 +13,70 @@ import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
+/**
+ * Manages the graphical user interface (GUI) for the chess game.
+ * It includes the main frame and its associated panels: menu, game, and rules.
+ */
 public class GameGUI {
-    //Parent frame and all of its panels
+    /**
+     * The main JFrame that acts as the parent container for the GUI.
+     */
     private JFrame frame;
+
+    /**
+     * The menu panel displayed in the GUI.
+     */
     private MenuPanel menu;
+
+    /**
+     * The game panel where the chessboard is displayed and interacted with.
+     */
     private GamePanel game;
+
+    /**
+     * The rules panel that shows the rules of the chess game.
+     */
     private RulesPanel rules;
 
+    /**
+     * Constructs the game GUI, initializing its components and layout.
+     *
+     * @param cb the ChessBoard representing the initial state of the game.
+     * @param engine the game engine managing game logic.
+     */
+    public GameGUI(ChessBoard cb, Engine engine) {
+        engine.setGameGUI(this); // Allow the engine to communicate with the GUI
+        
+        frame = new JFrame("CHESS"); // Main window for user interaction
+        frame.setLayout(new CardLayout()); // Card layout allows panel navigation
 
-    public GameGUI(ChessBoard cb, Engine engine){
-        
-        engine.setGameGUI(this);//Setting itself for engine, to communicate
-        
-        frame = new JFrame("CHESS"); //Main window/frame user will interract with this
-        frame.setLayout( new CardLayout()); //Frame has card layout, navigation listener chooses which panel to show
+        // Create the navigation listener and associate it with this frame
+        NavigationListener nl = new NavigationListener(this.frame);
 
-        NavigationListener nl = new NavigationListener(this.frame);//Creating the action listener wich will be added to these components
-        
-        //TODO Initalizing all the panels
+        // Initialize the panels
         game = new GamePanel(cb, engine, nl);
         menu = new MenuPanel(nl, game);
         rules = new RulesPanel(nl);
 
-        //TODO Adding Components to the frame 
+        // Add panels to the frame with unique identifiers
         frame.add("MenuPanel", menu);
         frame.add("GamePanel", game);
         frame.add("RulesPanel", rules);
 
-        //Adjusting the main frame
-        frame.setResizable(true);//Main frame is resizable
-        frame.setMinimumSize(new Dimension(650,580));//Minimum size guarantees that piece images will be displayed correctly
-        
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//Close application if window closes
-        frame.setVisible(true);//Set frame visible
+        // Configure the main frame
+        frame.setResizable(true); // Allow resizing of the main window
+        frame.setMinimumSize(new Dimension(650, 580)); // Minimum size to ensure proper layout
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // Exit application on close
+        frame.setVisible(true); // Make the frame visible
     }
 
-    
-        
-    public void updateGamePanel(ChessBoard cb){
-        this.game.setChessBoard(cb);
-        this.game.paintBoard();
-        
+    /**
+     * Updates the game panel with a new chessboard state.
+     *
+     * @param cb the ChessBoard representing the new state to display.
+     */
+    public void updateGamePanel(ChessBoard cb) {
+        this.game.setChessBoard(cb); // Update the board in the game panel
+        this.game.paintBoard(); // Repaint the game board to reflect changes
     }
 }

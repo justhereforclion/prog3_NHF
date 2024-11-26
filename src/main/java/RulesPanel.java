@@ -1,4 +1,3 @@
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
@@ -6,12 +5,25 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+/**
+ * The RulesPanel class represents a panel that displays the rules of chess. 
+ * This panel includes a scrollable text area with a detailed description of 
+ * each chess piece and its movements, along with a button to return to the 
+ * main menu.
+ */
 public class RulesPanel extends JPanel {
     
+    /**
+     * Constructs a RulesPanel that displays the chess rules and a button 
+     * to return to the main menu.
+     * 
+     * @param nl The ActionListener responsible for handling the back-to-menu 
+     *           action when the user clicks the "Back To Menu" button.
+     */
     public RulesPanel(ActionListener nl){
         setLayout(new BorderLayout());
 
-        
+        // Create a text area to display the chess rules
         JTextArea textArea = new JTextArea(
             "The Pawn\r\n" +
             "When a game begins, each side starts with eight pawns. \nWhite's pawns are located on the second rank, \nwhile Black's pawns are located on the seventh rank.\n" +
@@ -26,15 +38,14 @@ public class RulesPanel extends JPanel {
             "The queen is the most powerful chess piece! When a game begins,\n each side starts with one queen. The queen is considered a \n major piece (like a rook) and is worth nine points. It can move as many squares\n as it likes left or right horizontally, or as many squares as\n it likes up or down vertically (like a rook). The queen can also move as many squares\n as it likes diagonally (like a bishop). An easy way to remember how a\n queen can move is that it moves like a rook and a bishop combined!\n" +
             "The King\r\n" + 
             "The king is the most important chess piece. \nRemember, the goal of a game of chess is to checkmate the king!\n When a game starts, each side has one king. The king is not a very powerful piece,\n as it can only move (or capture) one square in any direction. \nPlease note that the king cannot be captured! \nWhen a king is attacked, it is called \"check.\"\n"
-            );
+        );
 
-        
-
+        // Create a "Back To Menu" button that navigates to the main menu
         JButton menuButton = new JButton("Back To Menu");
         menuButton.addActionListener(nl);
 
+        // Add components to the panel
         this.add(menuButton, BorderLayout.NORTH);
         this.add(textArea, BorderLayout.CENTER);
     }
-
 }
